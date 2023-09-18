@@ -9,20 +9,33 @@ wss.on("connection", ws => {
     console.log("new client connected");
  
     // sending message to client
-    ws.send('Welcome, you are connected!');
+    ws.send('{"type":"msg","payload":"here is my message","client":{"id":"e051b208-1b0c-4c26-9ec2-ab00b2b528a2","nick":"Server"}}');
  
     //on message from client
     ws.on("message", data => {
-        console.log(`Client has sent us: ${data}`)
+        console.log(`Client has sent us: ${data}`);
+        ws.send('{"type":"msg","payload":"here is my message","client":{"id":"e051b208-1b0c-4c26-9ec2-ab00b2b528a2","nick":"Server"}}');
     });
+
+    ws.onerror = function () {
+        console.log('websocket error')
+    }
  
     // handling what to do when clients disconnects from server
     ws.on("close", () => {
-        console.log("the client has connected");
+        console.log("the client has closed");
     });
+    
     // handling client connection error
     ws.onerror = function () {
         console.log("Some Error occurred")
     }
+    
+   /*
+    ws.on("error", () => {
+        console.log("ERROR!");
+    });
+    */
+
 });
 console.log("The WebSocket server is running on port 8080");

@@ -23,10 +23,11 @@
     "plyr": "^3.6.3",
     "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",
-    "primeng": "^11.0.0",
-    "rxjs": "^6.6.3",
+    "primeng": "^12.2.2",
+    "rxjs": "^6.6.7",
     "tslib": "^2.0.3",
-    "zone.js": "~0.11.4"
+    "webpack-cli": "^5.1.4",
+    "zone.js": "^0.11.8"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^12.2.18",
