@@ -9,12 +9,15 @@ wss.on("connection", ws => {
     console.log("new client connected");
  
     // sending message to client
-    ws.send('{"type":"msg","payload":"here is my message","client":{"id":"e051b208-1b0c-4c26-9ec2-ab00b2b528a2","nick":"Server"}}');
+    ws.send('{"type":"msg","payload":"Connected!","client":{"id":"e051b208-1b0c-4c26-9ec2-ab00b2b528a2","nick":"Server"}}');
  
     //on message from client
     ws.on("message", data => {
         console.log(`Client has sent us: ${data}`);
-        ws.send('{"type":"msg","payload":"here is my message","client":{"id":"e051b208-1b0c-4c26-9ec2-ab00b2b528a2","nick":"Server"}}');
+        var json = JSON.parse(data);
+        if (json.payload){
+            ws.send(`{"type":"msg","payload":"You sent '${json.payload}'","client":{"id":"e051b208-1b0c-4c26-9ec2-ab00b2b528a2","nick":"Server"}}`);
+        }
     });
 
     ws.onerror = function () {
