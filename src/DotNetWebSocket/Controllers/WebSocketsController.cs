@@ -23,16 +23,47 @@ namespace DotNetWebSocket.Controllers
         [HttpGet("/api/ws")]
         public async Task Get()
         {
-          if (HttpContext.WebSockets.IsWebSocketRequest)
-          {
-              using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-              _logger.Log(LogLevel.Information, "WebSocket connection established");
-              await Echo(webSocket);
-          }
-          else
-          {
-              HttpContext.Response.StatusCode = 400;
-          }
+            if (HttpContext.WebSockets.IsWebSocketRequest)
+            {
+                using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+                _logger.Log(LogLevel.Information, "WebSocket connection established");
+                using var watcher = new FileSystemWatcher(@"C:\temp");
+                watcher.NotifyFilter = NotifyFilters.Attributes
+                    | NotifyFilters.CreationTime
+                    | NotifyFilters.DirectoryName
+                    | NotifyFilters.FileName
+                    | NotifyFilters.LastAccess
+                    | NotifyFilters.LastWrite
+                    | NotifyFilters.Security
+                    | NotifyFilters.Size;
+
+                watcher.Changed += (senderObj, fileSysArgs) => {
+                    Console.WriteLine($"Changed: {fileSysArgs.FullPath}");
+                    WebSocketMessage serverMsg;
+                    serverMsg = new WebSocketMessage{
+                        client = new WebSocketUser{
+                            nick = "system",
+                        },
+                        type = "msg",
+                        payload = $"Changed: {fileSysArgs.FullPath}"
+                    };
+                    string serverMsgString = JsonConvert.SerializeObject(serverMsg);
+                    var serverMsgBytes = Encoding.UTF8.GetBytes(serverMsgString);
+                    var success =Task.Run<bool>(async()=>{
+                        await webSocket.SendAsync(new ArraySegment<byte>(serverMsgBytes, 0, serverMsgString.Length), WebSocketMessageType.Text, true, CancellationToken.None);
+                        return true;
+                    });
+                    _logger.Log(LogLevel.Information, "Message sent to Client");
+                };
+
+                watcher.IncludeSubdirectories = true;
+                watcher.EnableRaisingEvents = true;
+                await Echo(webSocket);
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 400;
+            }
         }
         
         private async Task Echo(WebSocket webSocket)
@@ -45,8 +76,7 @@ namespace DotNetWebSocket.Controllers
             {
                 string clientMsg = Encoding.UTF8.GetString(buffer,0,result.Count);
                 _logger.Log(LogLevel.Information, $"From client: '{clientMsg}'");
-                WebSocketMessage msg = JsonConvert.DeserializeObject<WebSocketMessage>(clientMsg);
-
+                WebSocketMessage msg = JsonConvert.DeserializeObject<WebSocketMessage>(clientMsg)!;
                 if (msg!.type != "setTyping"){
                     WebSocketMessage serverMsg;
                     if (msg!.type == "hello"){
