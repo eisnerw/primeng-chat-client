@@ -18,12 +18,9 @@ import {
   tap,
   throttleTime
 } from 'rxjs/operators';
-import {ChatClientTypingModel} from '../../core/models/chat-client.model';
 import {ServerMessageModel} from '../../core/models/server-message.model';
-import {MessageWithAttachment} from './message-input/message-input.component';
 import {HttpEventType} from '@angular/common/http';
 import {UuidFactoryService} from '../../core/services/uuid-factory.service';
-import {TypingService} from '../../core/services/typing.service';
 import {UserModel} from '../../core/models/user.model';
 import {UrlFactoryService} from '../../core/services/url-factory.service';
 import {HttpService} from '../../core/services/http.service';
@@ -38,7 +35,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   cornerMenuItems: MenuItem[];
   messages: ServerMessageModel[] = [];
-  users: ChatClientTypingModel[] = [];
+  users = [];
   progress: number = null;
   fixedScroll = false;
 
@@ -55,7 +52,6 @@ export class ChatComponent implements OnInit, OnDestroy {
               private snapshotService: ChatSnapshotService,
               private uuidFactory: UuidFactoryService,
               private messageService: MessageService,
-              private typingService: TypingService,
               private urlFactory: UrlFactoryService,
               private httpService: HttpService,
               private changeDetectionRef: ChangeDetectorRef
@@ -91,7 +87,6 @@ export class ChatComponent implements OnInit, OnDestroy {
   setIncomingMessageHandlers() {
     this.ws.incoming.pipe(
       tap(m => this.snapshotService.handle(m)),
-      tap(m => this.typingService.handle(m)),
       tap(m => {
           if (m.id === 'internal' && m.type === 'command' && m.payload === 'clearChatAppender') {
             this.messages = [];
@@ -137,20 +132,13 @@ export class ChatComponent implements OnInit, OnDestroy {
   setUsersListHandlers() {
     // combine a users list managed by the snapshot service with a typingMap managed by the typing service
     // and sort the resulting list
-    combineLatest([this.snapshotService.getClientsList$(), this.typingService.getTypingMap$()]).pipe(
+    combineLatest([this.snapshotService.getClientsList$()]).pipe(
       sampleTime(700)
-    ).subscribe(([users, typingMap]) => {
+    ).subscribe(([users]) => {
       this.users = users.map(user => ({
-        ...user,
-        isTyping: (typingMap.get(user.clientId) !== undefined)
+        ...user
       })).sort((a, b) => a.nick.localeCompare(b.nick));
     });
-  }
-
-
-// ====== OUTGOING MESSAGES UI EVENT ========
-  sendMessage(payload: MessageWithAttachment) {
-    this.ws.sendMsg(payload.message);
   }
 
 // ====== USER TYPING UI EVENT ========

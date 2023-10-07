@@ -7,7 +7,6 @@ import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {MenuModule} from 'primeng/menu';
 import {FormsModule} from '@angular/forms';
-import {MessageInputComponent} from './message-input/message-input.component';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {MessageEntryComponent} from './message-entry/message-entry.component';
 import {TooltipModule} from 'primeng/tooltip';
@@ -20,7 +19,6 @@ import {RippleModule} from 'primeng/ripple';
 @NgModule({
   declarations: [
     ChatComponent,
-    MessageInputComponent,
     MessageEntryComponent,
     LinkifyPipe,
     DeferLoadDirective

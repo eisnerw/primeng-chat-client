@@ -4,6 +4,3 @@ export interface ChatClientModel {
   nick: string;
 }
 
-export interface ChatClientTypingModel extends ChatClientModel {
-  isTyping: boolean;
-}

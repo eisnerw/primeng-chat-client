@@ -8,12 +8,6 @@ import {ErrorComponent} from './shared/error/error.component';
 
 const appRoutes: Routes = [
   {
-    path: RouteUrls.LOGIN,
-    canLoad: [NotAuthenticatedGuard],
-    canActivate: [NotAuthenticatedGuard],
-    loadChildren: () => import('src/app/features/login/login.module').then(m => m.LoginModule)
-  },
-  {
     path: RouteUrls.CHAT,
     canLoad: [AuthenticatedGuard],
     canActivate: [AuthenticatedGuard],
