@@ -13,25 +13,6 @@ export class UrlFactoryService {
     return this.wsUrl('/ws/');
   }
 
-  public getUploadUrl(): string {
-    return this.uploadUrl('/files/');
-  }
-
-  public getThumbsUrl(): string {
-    return this.uploadUrl('/files/thumbs/');
-  }
-
-  public getDownloadUrl(): string {
-    return this.getUploadUrl();
-  }
-
-  public getVideoSourcesUrl(): string {
-    return this.uploadUrl('/videos/sources/');
-  }
-
-  public getVideoStreamsUrl(): string {
-    return this.uploadUrl('/videos/streams/');
-  }
 
   public getMessageHistoryUrl(): string {
     return this.uploadUrl('/message-history/');

@@ -3,16 +3,14 @@
 <div class="container">
   <div class="messages">
     <div class="scroll-button" *ngIf="fixedScroll">
-      <button pButton pRipple type="button" icon="pi pi-chevron-down"
-              class="p-button-rounded p-button-outlined" (click)="scrollToBottom(true)"></button>
+      <span pButton pRipple type="button" icon="pi pi-chevron-down"
+              class="p-button-rounded p-button-outlined" (click)="scrollToBottom(true)"></span>
     </div>
     <div #messagesScroll (scroll)="onScroll()" class="msg-list-scroll-container">
       <ul class="msg-list">
         <li class="msg-list-entry" *ngFor='let message of messages' [id]="'m'+message.id">
           <app-message-entry
-            [principal]="principal" [message]="message" [thumbsUrl]="thumbsUrl"
-            [videoSourceUpdates$]="videoSourceUpdates$"
-            (attachmentRequest)="downloadAttachment($event)"></app-message-entry>
+            [principal]="principal" [message]="message"></app-message-entry>
         </li>
       </ul>
     </div>

@@ -1,9 +1,9 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ServerMessageModel} from '../../../core/models/server-message.model';
-import {AttachmentModel, RichMessageModel} from '../../../core/models/rich-message.model';
 import {UserModel} from '../../../core/models/user.model';
 import {Observable} from 'rxjs';
-import {VideoSourceUpdateModel} from '../../../core/models/video-source-update.model';
+import { RichMessageModel } from 'src/app/core/models/rich-message.model';
+
 
 @Component({
   selector: 'app-message-entry',
@@ -13,10 +13,7 @@ import {VideoSourceUpdateModel} from '../../../core/models/video-source-update.m
 export class MessageEntryComponent implements OnInit {
 
   @Input() message: ServerMessageModel;
-  @Input() thumbsUrl: string;
   @Input() principal: UserModel;
-  @Input() videoSourceUpdates$: Observable<VideoSourceUpdateModel>;
-  @Output() attachmentRequest: EventEmitter<AttachmentModel> = new EventEmitter();
 
   richMessage: RichMessageModel;
   isSelfMessage: boolean;

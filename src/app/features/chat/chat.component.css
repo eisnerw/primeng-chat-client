@@ -1,8 +1,10 @@
 .container {
   height: 100%;
   display: grid;
+  /*
   grid-template-columns: 1fr 180px;
   grid-template-rows: 1fr 60px;
+  */
   overflow: hidden;
 }
 
