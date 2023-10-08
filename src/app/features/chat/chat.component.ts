@@ -19,10 +19,7 @@ import {
   throttleTime
 } from 'rxjs/operators';
 import {ServerMessageModel} from '../../core/models/server-message.model';
-import {HttpEventType} from '@angular/common/http';
-import {UuidFactoryService} from '../../core/services/uuid-factory.service';
 import {UserModel} from '../../core/models/user.model';
-import {UrlFactoryService} from '../../core/services/url-factory.service';
 import {HttpService} from '../../core/services/http.service';
 
 @Component({
@@ -50,9 +47,6 @@ export class ChatComponent implements OnInit, OnDestroy {
               private router: Router,
               private ws: WsService,
               private snapshotService: ChatSnapshotService,
-              private uuidFactory: UuidFactoryService,
-              private messageService: MessageService,
-              private urlFactory: UrlFactoryService,
               private httpService: HttpService,
               private changeDetectionRef: ChangeDetectorRef
   ) {
@@ -64,23 +58,8 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.nick = this.principal.nick;
-    this.setCornerMenuHandlers();
     this.setIncomingMessageHandlers();
-    this.setNickChangedHandler();
-    this.setUsersListHandlers();
     this.setMessageHistoryHandler();
-  }
-
-// ====== CORNER MENU UI EVENTS ========
-  setCornerMenuHandlers() {
-    this.cornerMenuItems = [
-      {label: 'Logout', icon: 'pi pi-sign-out', command: () => this.logout()},
-    ];
-  }
-
-  logout() {
-    this.userPrincipalService.removePrincipal();
-    this.router.navigate(['/']);
   }
 
 // ====== INCOMING WS MESSAGES ========
@@ -93,7 +72,7 @@ export class ChatComponent implements OnInit, OnDestroy {
           }
         }
       ),
-      filter(m => m.type === 'msg' || m.type === 'richMsg' || m.type === 'info'),
+      filter(m => m.type === 'msg' || m.type === 'info'),
       bufferTime(600),
       filter(buffer => buffer.length > 0),
       tap(m => {
@@ -113,37 +92,6 @@ export class ChatComponent implements OnInit, OnDestroy {
       el.scrollTop = el.scrollHeight - el.clientHeight;
     } catch (err) {
     }
-  }
-
-// ====== NICK CHANGED UI EVENT ========
-  setNickChangedHandler() {
-    this.nickChanged.pipe(
-      debounceTime(1000),
-      distinctUntilChanged(),
-      filter(nick => nick !== null && this.nick.length !== 0),
-      tap(nick => {
-        this.userPrincipalService.setNick(nick);
-        this.ws.sendUpdateMe();
-      })
-    ).subscribe();
-  }
-
-// ====== USERS LIST UPDATE ========
-  setUsersListHandlers() {
-    // combine a users list managed by the snapshot service with a typingMap managed by the typing service
-    // and sort the resulting list
-    combineLatest([this.snapshotService.getClientsList$()]).pipe(
-      sampleTime(700)
-    ).subscribe(([users]) => {
-      this.users = users.map(user => ({
-        ...user
-      })).sort((a, b) => a.nick.localeCompare(b.nick));
-    });
-  }
-
-// ====== USER TYPING UI EVENT ========
-  userTyping() {
-    this.ws.sendSetTyping();
   }
 
 // ====== SCROLL UI EVENT ========

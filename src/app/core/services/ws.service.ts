@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import {UserPrincipalService} from './user-principal.service';
 import {UrlFactoryService} from './url-factory.service';
-import {RichMessageModel} from '../models/rich-message.model';
 import {ServerMessageModel} from '../models/server-message.model';
 import {merge, Observable, Subject} from 'rxjs';
 import {OutgoingMessageModel} from '../models/outgoing-message.model';
@@ -66,19 +65,4 @@ export class WsService {
     this.sendTypedMessage('hello', '');
   }
 
-  sendUpdateMe() {
-    this.sendTypedMessage('updateMe', '');
-  }
-
-  sendSetTyping() {
-    this.sendTypedMessage('setTyping', '');
-  }
-
-  sendMsg(text: string) {
-    this.sendTypedMessage('msg', text);
-  }
-
-  sendRichMsg(richMessage: RichMessageModel) {
-    this.sendTypedMessage('richMsg', JSON.stringify(richMessage));
-  }
 }
